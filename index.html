@@ -1,0 +1,1304 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LCS WorkHub | Task & Note Manager</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  :root {
+    --bg: #08090d;
+    --bg-card: #0d0e14;
+    --bg-elevated: #13141c;
+    --bg-hover: #1a1b24;
+    --accent: #00d4ff;
+    --accent-dim: rgba(0, 212, 255, 0.15);
+    --accent-glow: rgba(0, 212, 255, 0.3);
+    --purple: #a855f7;
+    --purple-dim: rgba(168, 85, 247, 0.15);
+    --green: #22c55e;
+    --green-dim: rgba(34, 197, 94, 0.15);
+    --orange: #f59e0b;
+    --orange-dim: rgba(245, 158, 11, 0.15);
+    --red: #ef4444;
+    --red-dim: rgba(239, 68, 68, 0.15);
+    --text: #e2e8f0;
+    --text-dim: #94a3b8;
+    --text-dark: #64748b;
+    --border: rgba(255,255,255,0.06);
+    --border-hover: rgba(0, 212, 255, 0.3);
+    --font-body: 'DM Sans', sans-serif;
+    --font-mono: 'JetBrains Mono', monospace;
+  }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--font-body);
+    line-height: 1.6;
+    min-height: 100vh;
+  }
+
+  /* Header */
+  .header {
+    background: var(--bg-card);
+    border-bottom: 1px solid var(--border);
+    padding: 1rem 2rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+
+  .logo {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+  }
+
+  .logo-icon {
+    width: 40px;
+    height: 40px;
+    background: var(--accent-dim);
+    border: 1px solid var(--accent);
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: var(--font-mono);
+    font-weight: 700;
+    color: var(--accent);
+    font-size: 1.1rem;
+  }
+
+  .logo-text {
+    font-family: var(--font-mono);
+    font-weight: 700;
+    font-size: 1.2rem;
+    color: var(--text);
+    letter-spacing: -0.02em;
+  }
+
+  .logo-text span {
+    color: var(--accent);
+  }
+
+  .header-actions {
+    display: flex;
+    gap: 0.75rem;
+  }
+
+  .btn {
+    padding: 0.6rem 1.2rem;
+    border-radius: 8px;
+    font-family: var(--font-body);
+    font-size: 0.85rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s;
+    border: 1px solid var(--border);
+    background: var(--bg-elevated);
+    color: var(--text);
+  }
+
+  .btn:hover {
+    border-color: var(--border-hover);
+    background: var(--bg-hover);
+  }
+
+  .btn-primary {
+    background: var(--accent-dim);
+    border-color: var(--accent);
+    color: var(--accent);
+  }
+
+  .btn-primary:hover {
+    background: var(--accent);
+    color: var(--bg);
+  }
+
+  /* Layout */
+  .container {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 2rem;
+    display: grid;
+    grid-template-columns: 280px 1fr;
+    gap: 2rem;
+  }
+
+  /* Sidebar */
+  .sidebar {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .nav-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 1rem;
+  }
+
+  .nav-title {
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--text-dark);
+    margin-bottom: 0.75rem;
+    font-family: var(--font-mono);
+  }
+
+  .nav-item {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.6rem 0.75rem;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s;
+    font-size: 0.9rem;
+    color: var(--text-dim);
+  }
+
+  .nav-item:hover {
+    background: var(--bg-elevated);
+    color: var(--text);
+  }
+
+  .nav-item.active {
+    background: var(--accent-dim);
+    color: var(--accent);
+    border: 1px solid var(--accent);
+  }
+
+  .nav-icon {
+    font-size: 1.1rem;
+    width: 24px;
+    text-align: center;
+  }
+
+  .nav-count {
+    margin-left: auto;
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    padding: 0.15rem 0.4rem;
+    border-radius: 4px;
+    background: var(--bg-elevated);
+    color: var(--text-dark);
+  }
+
+  .nav-item.active .nav-count {
+    background: var(--accent);
+    color: var(--bg);
+  }
+
+  /* Stats */
+  .stats-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.75rem;
+  }
+
+  .stat-box {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 1rem;
+    text-align: center;
+  }
+
+  .stat-value {
+    font-family: var(--font-mono);
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--accent);
+  }
+
+  .stat-label {
+    font-size: 0.75rem;
+    color: var(--text-dark);
+    margin-top: 0.25rem;
+  }
+
+  /* Main Content */
+  .main {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+
+  .section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .section-title {
+    font-size: 1.3rem;
+    font-weight: 700;
+  }
+
+  .section-subtitle {
+    font-size: 0.85rem;
+    color: var(--text-dark);
+    margin-top: 0.25rem;
+  }
+
+  /* Task Input */
+  .task-input-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 1.5rem;
+  }
+
+  .input-row {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 1rem;
+  }
+
+  .input-field {
+    flex: 1;
+    background: var(--bg-elevated);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 0.75rem 1rem;
+    color: var(--text);
+    font-family: var(--font-body);
+    font-size: 0.9rem;
+    outline: none;
+    transition: border-color 0.3s;
+  }
+
+  .input-field:focus {
+    border-color: var(--accent);
+  }
+
+  .input-field::placeholder {
+    color: var(--text-dark);
+  }
+
+  .select-field {
+    background: var(--bg-elevated);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 0.75rem 1rem;
+    color: var(--text);
+    font-family: var(--font-body);
+    font-size: 0.9rem;
+    outline: none;
+    cursor: pointer;
+    min-width: 140px;
+  }
+
+  .select-field:focus {
+    border-color: var(--accent);
+  }
+
+  .textarea-field {
+    width: 100%;
+    background: var(--bg-elevated);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 0.75rem 1rem;
+    color: var(--text);
+    font-family: var(--font-body);
+    font-size: 0.9rem;
+    outline: none;
+    resize: vertical;
+    min-height: 80px;
+    margin-bottom: 1rem;
+  }
+
+  .textarea-field:focus {
+    border-color: var(--accent);
+  }
+
+  .input-actions {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .input-tags {
+    display: flex;
+    gap: 0.5rem;
+  }
+
+  .tag-btn {
+    padding: 0.4rem 0.8rem;
+    border-radius: 6px;
+    font-size: 0.8rem;
+    cursor: pointer;
+    border: 1px solid var(--border);
+    background: var(--bg-elevated);
+    color: var(--text-dim);
+    transition: all 0.3s;
+  }
+
+  .tag-btn:hover, .tag-btn.active {
+    border-color: var(--accent);
+    color: var(--accent);
+    background: var(--accent-dim);
+  }
+
+  /* Task List */
+  .task-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+
+  .task-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 1.25rem;
+    transition: all 0.3s;
+    cursor: pointer;
+  }
+
+  .task-card:hover {
+    border-color: var(--border-hover);
+    transform: translateY(-1px);
+  }
+
+  .task-card.completed {
+    opacity: 0.5;
+  }
+
+  .task-card.completed .task-title {
+    text-decoration: line-through;
+    color: var(--text-dark);
+  }
+
+  .task-header {
+    display: flex;
+    align-items: flex-start;
+    gap: 1rem;
+    margin-bottom: 0.75rem;
+  }
+
+  .task-checkbox {
+    width: 22px;
+    height: 22px;
+    border: 2px solid var(--border);
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.3s;
+    flex-shrink: 0;
+    margin-top: 2px;
+  }
+
+  .task-checkbox:hover {
+    border-color: var(--accent);
+  }
+
+  .task-checkbox.checked {
+    background: var(--green);
+    border-color: var(--green);
+  }
+
+  .task-checkbox.checked::after {
+    content: '✓';
+    color: var(--bg);
+    font-size: 0.8rem;
+    font-weight: 700;
+  }
+
+  .task-content {
+    flex: 1;
+  }
+
+  .task-title {
+    font-size: 0.95rem;
+    font-weight: 600;
+    margin-bottom: 0.35rem;
+  }
+
+  .task-desc {
+    font-size: 0.85rem;
+    color: var(--text-dim);
+    line-height: 1.5;
+  }
+
+  .task-meta {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-top: 0.75rem;
+    flex-wrap: wrap;
+  }
+
+  .task-tag {
+    font-size: 0.75rem;
+    padding: 0.25rem 0.6rem;
+    border-radius: 4px;
+    font-family: var(--font-mono);
+    font-weight: 500;
+  }
+
+  .task-tag.legal {
+    background: var(--purple-dim);
+    color: var(--purple);
+  }
+
+  .task-tag.accounting {
+    background: var(--green-dim);
+    color: var(--green);
+  }
+
+  .task-tag.urgent {
+    background: var(--red-dim);
+    color: var(--red);
+  }
+
+  .task-tag.scheduled {
+    background: var(--orange-dim);
+    color: var(--orange);
+  }
+
+  .task-date {
+    font-family: var(--font-mono);
+    font-size: 0.8rem;
+    color: var(--text-dark);
+    display: flex;
+    align-items: center;
+    gap: 0.35rem;
+  }
+
+  .task-priority {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    margin-left: auto;
+  }
+
+  .task-priority.high { background: var(--red); }
+  .task-priority.medium { background: var(--orange); }
+  .task-priority.low { background: var(--green); }
+
+  /* Notes Grid */
+  .notes-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 1rem;
+  }
+
+  .note-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 1.25rem;
+    transition: all 0.3s;
+    cursor: pointer;
+  }
+
+  .note-card:hover {
+    border-color: var(--border-hover);
+    transform: translateY(-2px);
+  }
+
+  .note-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 0.75rem;
+  }
+
+  .note-title {
+    font-size: 0.95rem;
+    font-weight: 600;
+  }
+
+  .note-actions {
+    display: flex;
+    gap: 0.5rem;
+    opacity: 0;
+    transition: opacity 0.3s;
+  }
+
+  .note-card:hover .note-actions {
+    opacity: 1;
+  }
+
+  .note-action {
+    width: 28px;
+    height: 28px;
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    border: 1px solid var(--border);
+    background: var(--bg-elevated);
+    color: var(--text-dim);
+    font-size: 0.8rem;
+  }
+
+  .note-action:hover {
+    border-color: var(--red);
+    color: var(--red);
+  }
+
+  .note-preview {
+    font-size: 0.85rem;
+    color: var(--text-dim);
+    line-height: 1.5;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  .note-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 1rem;
+    padding-top: 0.75rem;
+    border-top: 1px solid var(--border);
+  }
+
+  .note-date {
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    color: var(--text-dark);
+  }
+
+  .note-tag {
+    font-size: 0.75rem;
+    padding: 0.2rem 0.5rem;
+    border-radius: 4px;
+    font-family: var(--font-mono);
+  }
+
+  /* Modal */
+  .modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0,0,0,0.7);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    padding: 2rem;
+  }
+
+  .modal-overlay.active {
+    display: flex;
+  }
+
+  .modal {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    width: 100%;
+    max-width: 600px;
+    max-height: 80vh;
+    overflow-y: auto;
+    padding: 2rem;
+  }
+
+  .modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+  }
+
+  .modal-title {
+    font-size: 1.2rem;
+    font-weight: 700;
+  }
+
+  .modal-close {
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    border: 1px solid var(--border);
+    background: var(--bg-elevated);
+    color: var(--text-dim);
+    font-size: 1.2rem;
+  }
+
+  .modal-close:hover {
+    border-color: var(--red);
+    color: var(--red);
+  }
+
+  /* Empty State */
+  .empty-state {
+    text-align: center;
+    padding: 3rem;
+    color: var(--text-dark);
+  }
+
+  .empty-icon {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+  }
+
+  .empty-text {
+    font-size: 1rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .empty-sub {
+    font-size: 0.85rem;
+  }
+
+  /* Search */
+  .search-bar {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 0.75rem 1rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .search-icon {
+    color: var(--text-dark);
+    font-size: 1rem;
+  }
+
+  .search-input {
+    flex: 1;
+    background: none;
+    border: none;
+    color: var(--text);
+    font-family: var(--font-body);
+    font-size: 0.9rem;
+    outline: none;
+  }
+
+  .search-input::placeholder {
+    color: var(--text-dark);
+  }
+
+  /* Responsive */
+  @media (max-width: 768px) {
+    .container {
+      grid-template-columns: 1fr;
+      padding: 1rem;
+    }
+
+    .sidebar {
+      order: 2;
+    }
+
+    .main {
+      order: 1;
+    }
+
+    .input-row {
+      flex-direction: column;
+    }
+
+    .notes-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .header {
+      flex-direction: column;
+      gap: 1rem;
+    }
+  }
+</style>
+</head>
+<body>
+
+<!-- Header -->
+<div class="header">
+  <div class="logo">
+    <div class="logo-icon">LCS</div>
+    <div class="logo-text">LCS <span>WorkHub</span></div>
+  </div>
+  <div class="header-actions">
+    <button class="btn" onclick="exportData()">📥 Export</button>
+    <button class="btn btn-primary" onclick="showModal('task')">+ New Task</button>
+  </div>
+</div>
+
+<div class="container">
+  <!-- Sidebar -->
+  <div class="sidebar">
+    <div class="nav-card">
+      <div class="nav-title">Navigation</div>
+      <div class="nav-item active" onclick="showView('tasks')">
+        <span class="nav-icon">✓</span>
+        <span>Tasks</span>
+        <span class="nav-count" id="taskCount">3</span>
+      </div>
+      <div class="nav-item" onclick="showView('notes')">
+        <span class="nav-icon">📝</span>
+        <span>Notes</span>
+        <span class="nav-count" id="noteCount">2</span>
+      </div>
+      <div class="nav-item" onclick="showView('calendar')">
+        <span class="nav-icon">📅</span>
+        <span>Schedule</span>
+      </div>
+      <div class="nav-item" onclick="showView('archive')">
+        <span class="nav-icon">📦</span>
+        <span>Archive</span>
+      </div>
+    </div>
+
+    <div class="nav-card">
+      <div class="nav-title">Categories</div>
+      <div class="nav-item" onclick="filterByTag('legal')">
+        <span class="nav-icon">⚖️</span>
+        <span>Legal</span>
+      </div>
+      <div class="nav-item" onclick="filterByTag('accounting')">
+        <span class="nav-icon">💰</span>
+        <span>Accounting</span>
+      </div>
+      <div class="nav-item" onclick="filterByTag('urgent')">
+        <span class="nav-icon">🔥</span>
+        <span>Urgent</span>
+      </div>
+    </div>
+
+    <div class="stats-grid">
+      <div class="stat-box">
+        <div class="stat-value" id="statPending">3</div>
+        <div class="stat-label">Pending</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-value" id="statDone">0</div>
+        <div class="stat-label">Done</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-value" id="statNotes">2</div>
+        <div class="stat-label">Notes</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-value" id="statToday">1</div>
+        <div class="stat-label">Today</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Main Content -->
+  <div class="main">
+    <!-- Tasks View -->
+    <div id="tasksView">
+      <div class="section-header">
+        <div>
+          <div class="section-title">Tasks</div>
+          <div class="section-subtitle">Manage your legal and accounting work</div>
+        </div>
+      </div>
+
+      <div class="search-bar">
+        <span class="search-icon">🔍</span>
+        <input type="text" class="search-input" placeholder="Search tasks..." id="taskSearch" oninput="searchTasks()">
+      </div>
+
+      <div class="task-input-card">
+        <div class="input-row">
+          <input type="text" class="input-field" placeholder="What needs to be done?" id="newTaskTitle">
+          <input type="date" class="select-field" id="newTaskDate">
+          <select class="select-field" id="newTaskPriority">
+            <option value="low">Low</option>
+            <option value="medium">Medium</option>
+            <option value="high">High</option>
+          </select>
+        </div>
+        <textarea class="textarea-field" placeholder="Add details..." id="newTaskDesc"></textarea>
+        <div class="input-actions">
+          <div class="input-tags">
+            <button class="tag-btn" onclick="toggleTag(this, 'legal')">⚖️ Legal</button>
+            <button class="tag-btn" onclick="toggleTag(this, 'accounting')">💰 Accounting</button>
+            <button class="tag-btn" onclick="toggleTag(this, 'urgent')">🔥 Urgent</button>
+            <button class="tag-btn" onclick="toggleTag(this, 'scheduled')">📅 Scheduled</button>
+          </div>
+          <button class="btn btn-primary" onclick="addTask()">Add Task</button>
+        </div>
+      </div>
+
+      <div class="task-list" id="taskList">
+        <!-- Tasks will be rendered here -->
+      </div>
+    </div>
+
+    <!-- Notes View -->
+    <div id="notesView" style="display: none;">
+      <div class="section-header">
+        <div>
+          <div class="section-title">Notes</div>
+          <div class="section-subtitle">Quick notes and meeting minutes</div>
+        </div>
+        <button class="btn btn-primary" onclick="showModal('note')">+ New Note</button>
+      </div>
+
+      <div class="search-bar">
+        <span class="search-icon">🔍</span>
+        <input type="text" class="search-input" placeholder="Search notes..." id="noteSearch" oninput="searchNotes()">
+      </div>
+
+      <div class="notes-grid" id="notesGrid">
+        <!-- Notes will be rendered here -->
+      </div>
+    </div>
+
+    <!-- Calendar View -->
+    <div id="calendarView" style="display: none;">
+      <div class="section-header">
+        <div>
+          <div class="section-title">Schedule</div>
+          <div class="section-subtitle">Upcoming deadlines and meetings</div>
+        </div>
+      </div>
+      <div class="task-list" id="calendarList">
+        <!-- Scheduled tasks will appear here -->
+      </div>
+    </div>
+
+    <!-- Archive View -->
+    <div id="archiveView" style="display: none;">
+      <div class="section-header">
+        <div>
+          <div class="section-title">Archive</div>
+          <div class="section-subtitle">Completed tasks and old notes</div>
+        </div>
+      </div>
+      <div class="task-list" id="archiveList">
+        <!-- Archived items will appear here -->
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal -->
+<div class="modal-overlay" id="modal">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title" id="modalTitle">New Note</div>
+      <button class="modal-close" onclick="hideModal()">×</button>
+    </div>
+    <div id="modalContent">
+      <input type="text" class="input-field" placeholder="Note title..." id="noteTitle" style="margin-bottom: 1rem;">
+      <textarea class="textarea-field" placeholder="Write your note here..." id="noteBody" style="min-height: 200px;"></textarea>
+      <div class="input-tags" style="margin-bottom: 1rem;">
+        <button class="tag-btn" onclick="toggleTag(this, 'legal')">⚖️ Legal</button>
+        <button class="tag-btn" onclick="toggleTag(this, 'accounting')">💰 Accounting</button>
+        <button class="tag-btn" onclick="toggleTag(this, 'meeting')">👥 Meeting</button>
+      </div>
+      <button class="btn btn-primary" onclick="saveNote()" style="width: 100%;">Save Note</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// Data storage
+let tasks = JSON.parse(localStorage.getItem('lcs_tasks')) || [
+  {
+    id: 1,
+    title: 'Review Q2 client contracts',
+    desc: 'Go through all client agreements signed in Q2. Check renewal clauses and payment terms. Flag any that need legal review.',
+    date: '2026-05-20',
+    priority: 'high',
+    tags: ['legal', 'urgent'],
+    completed: false,
+    created: '2026-05-18'
+  },
+  {
+    id: 2,
+    title: 'Prepare VAT filing for April',
+    desc: 'Compile all invoices and receipts. Calculate input and output VAT. Submit before May 25 deadline.',
+    date: '2026-05-25',
+    priority: 'high',
+    tags: ['accounting', 'urgent'],
+    completed: false,
+    created: '2026-05-18'
+  },
+  {
+    id: 3,
+    title: 'Update employee handbook',
+    desc: 'Add new remote work policy and GDPR compliance section. Get legal sign-off before distribution.',
+    date: '2026-05-30',
+    priority: 'medium',
+    tags: ['legal'],
+    completed: false,
+    created: '2026-05-18'
+  }
+];
+
+let notes = JSON.parse(localStorage.getItem('lcs_notes')) || [
+  {
+    id: 1,
+    title: 'Client Meeting - Acme Corp',
+    body: 'Discussion points:\n- Contract renewal for 2026-2027\n- New pricing structure (15% increase)\n- Payment terms: Net 30 → Net 15\n- Legal to review liability clause\n\nAction items:\n1. Send draft by Friday\n2. Schedule follow-up for next week',
+    tags: ['legal', 'meeting'],
+    date: '2026-05-18'
+  },
+  {
+    id: 2,
+    title: 'Monthly P&L Summary',
+    body: 'Revenue: $145K (+12% MoM)\nExpenses: $98K\nNet: $47K\n\nKey drivers:\n- 3 new clients onboarded\n- Reduced software costs by $5K\n- Legal fees higher than budgeted ($8K vs $5K)\n\nNext month focus: Cost control in legal spend',
+    tags: ['accounting'],
+    date: '2026-05-15'
+  }
+];
+
+let currentView = 'tasks';
+let selectedTags = [];
+
+// Save to localStorage
+function saveData() {
+  localStorage.setItem('lcs_tasks', JSON.stringify(tasks));
+  localStorage.setItem('lcs_notes', JSON.stringify(notes));
+  updateStats();
+}
+
+// Update stats
+function updateStats() {
+  const pending = tasks.filter(t => !t.completed).length;
+  const done = tasks.filter(t => t.completed).length;
+  const today = tasks.filter(t => t.date === new Date().toISOString().split('T')[0]).length;
+
+  document.getElementById('taskCount').textContent = pending;
+  document.getElementById('noteCount').textContent = notes.length;
+  document.getElementById('statPending').textContent = pending;
+  document.getElementById('statDone').textContent = done;
+  document.getElementById('statNotes').textContent = notes.length;
+  document.getElementById('statToday').textContent = today;
+}
+
+// Render tasks
+function renderTasks(filteredTasks = null) {
+  const list = document.getElementById('taskList');
+  const displayTasks = filteredTasks || tasks.filter(t => !t.completed);
+
+  if (displayTasks.length === 0) {
+    list.innerHTML = `
+      <div class="empty-state">
+        <div class="empty-icon">✓</div>
+        <div class="empty-text">All caught up!</div>
+        <div class="empty-sub">No pending tasks</div>
+      </div>
+    `;
+    return;
+  }
+
+  list.innerHTML = displayTasks.map(task => `
+    <div class="task-card ${task.completed ? 'completed' : ''}" data-id="${task.id}">
+      <div class="task-header">
+        <div class="task-checkbox ${task.completed ? 'checked' : ''}" onclick="toggleTask(${task.id})"></div>
+        <div class="task-content">
+          <div class="task-title">${task.title}</div>
+          <div class="task-desc">${task.desc}</div>
+          <div class="task-meta">
+            ${task.tags.map(tag => `<span class="task-tag ${tag}">${tag}</span>`).join('')}
+            <span class="task-date">📅 ${task.date}</span>
+            <div class="task-priority ${task.priority}"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  `).join('');
+}
+
+// Render notes
+function renderNotes(filteredNotes = null) {
+  const grid = document.getElementById('notesGrid');
+  const displayNotes = filteredNotes || notes;
+
+  if (displayNotes.length === 0) {
+    grid.innerHTML = `
+      <div class="empty-state" style="grid-column: 1/-1;">
+        <div class="empty-icon">📝</div>
+        <div class="empty-text">No notes yet</div>
+        <div class="empty-sub">Create your first note</div>
+      </div>
+    `;
+    return;
+  }
+
+  grid.innerHTML = displayNotes.map(note => `
+    <div class="note-card" data-id="${note.id}">
+      <div class="note-header">
+        <div class="note-title">${note.title}</div>
+        <div class="note-actions">
+          <button class="note-action" onclick="deleteNote(${note.id})">🗑</button>
+        </div>
+      </div>
+      <div class="note-preview">${note.body}</div>
+      <div class="note-footer">
+        <span class="note-date">${note.date}</span>
+        ${note.tags.map(tag => `<span class="note-tag ${tag}">${tag}</span>`).join('')}
+      </div>
+    </div>
+  `).join('');
+}
+
+// Render calendar
+function renderCalendar() {
+  const list = document.getElementById('calendarList');
+  const scheduled = tasks.filter(t => t.date && !t.completed).sort((a, b) => new Date(a.date) - new Date(b.date));
+
+  if (scheduled.length === 0) {
+    list.innerHTML = `
+      <div class="empty-state">
+        <div class="empty-icon">📅</div>
+        <div class="empty-text">No scheduled tasks</div>
+        <div class="empty-sub">Add dates to tasks to see them here</div>
+      </div>
+    `;
+    return;
+  }
+
+  list.innerHTML = scheduled.map(task => `
+    <div class="task-card">
+      <div class="task-header">
+        <div class="task-content">
+          <div class="task-title">${task.title}</div>
+          <div class="task-desc">${task.desc}</div>
+          <div class="task-meta">
+            ${task.tags.map(tag => `<span class="task-tag ${tag}">${tag}</span>`).join('')}
+            <span class="task-date">📅 ${task.date}</span>
+            <div class="task-priority ${task.priority}"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  `).join('');
+}
+
+// Render archive
+function renderArchive() {
+  const list = document.getElementById('archiveList');
+  const archived = tasks.filter(t => t.completed);
+
+  if (archived.length === 0) {
+    list.innerHTML = `
+      <div class="empty-state">
+        <div class="empty-icon">📦</div>
+        <div class="empty-text">Archive is empty</div>
+        <div class="empty-sub">Completed tasks will appear here</div>
+      </div>
+    `;
+    return;
+  }
+
+  list.innerHTML = archived.map(task => `
+    <div class="task-card completed">
+      <div class="task-header">
+        <div class="task-checkbox checked" onclick="toggleTask(${task.id})"></div>
+        <div class="task-content">
+          <div class="task-title">${task.title}</div>
+          <div class="task-desc">${task.desc}</div>
+          <div class="task-meta">
+            ${task.tags.map(tag => `<span class="task-tag ${tag}">${tag}</span>`).join('')}
+            <span class="task-date">✓ Completed</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  `).join('');
+}
+
+// Add task
+function addTask() {
+  const title = document.getElementById('newTaskTitle').value;
+  const desc = document.getElementById('newTaskDesc').value;
+  const date = document.getElementById('newTaskDate').value;
+  const priority = document.getElementById('newTaskPriority').value;
+
+  if (!title) return;
+
+  const task = {
+    id: Date.now(),
+    title,
+    desc: desc || '',
+    date: date || new Date().toISOString().split('T')[0],
+    priority,
+    tags: [...selectedTags],
+    completed: false,
+    created: new Date().toISOString().split('T')[0]
+  };
+
+  tasks.push(task);
+  saveData();
+
+  // Clear inputs
+  document.getElementById('newTaskTitle').value = '';
+  document.getElementById('newTaskDesc').value = '';
+  document.getElementById('newTaskDate').value = '';
+  selectedTags = [];
+  document.querySelectorAll('.tag-btn').forEach(btn => btn.classList.remove('active'));
+
+  renderTasks();
+}
+
+// Toggle task completion
+function toggleTask(id) {
+  const task = tasks.find(t => t.id === id);
+  if (task) {
+    task.completed = !task.completed;
+    saveData();
+    renderTasks();
+    if (currentView === 'archive') renderArchive();
+    if (currentView === 'calendar') renderCalendar();
+  }
+}
+
+// Toggle tag
+function toggleTag(btn, tag) {
+  btn.classList.toggle('active');
+  if (selectedTags.includes(tag)) {
+    selectedTags = selectedTags.filter(t => t !== tag);
+  } else {
+    selectedTags.push(tag);
+  }
+}
+
+// Save note
+function saveNote() {
+  const title = document.getElementById('noteTitle').value;
+  const body = document.getElementById('noteBody').value;
+
+  if (!title) return;
+
+  const note = {
+    id: Date.now(),
+    title,
+    body: body || '',
+    tags: [...selectedTags],
+    date: new Date().toISOString().split('T')[0]
+  };
+
+  notes.push(note);
+  saveData();
+
+  // Clear inputs
+  document.getElementById('noteTitle').value = '';
+  document.getElementById('noteBody').value = '';
+  selectedTags = [];
+  document.querySelectorAll('.tag-btn').forEach(btn => btn.classList.remove('active'));
+
+  hideModal();
+  if (currentView === 'notes') renderNotes();
+}
+
+// Delete note
+function deleteNote(id) {
+  notes = notes.filter(n => n.id !== id);
+  saveData();
+  renderNotes();
+}
+
+// Search tasks
+function searchTasks() {
+  const query = document.getElementById('taskSearch').value.toLowerCase();
+  const filtered = tasks.filter(t =>
+    !t.completed && (t.title.toLowerCase().includes(query) || t.desc.toLowerCase().includes(query))
+  );
+  renderTasks(filtered);
+}
+
+// Search notes
+function searchNotes() {
+  const query = document.getElementById('noteSearch').value.toLowerCase();
+  const filtered = notes.filter(n =>
+    n.title.toLowerCase().includes(query) || n.body.toLowerCase().includes(query)
+  );
+  renderNotes(filtered);
+}
+
+// Filter by tag
+function filterByTag(tag) {
+  if (currentView === 'tasks') {
+    const filtered = tasks.filter(t => !t.completed && t.tags.includes(tag));
+    renderTasks(filtered);
+  } else if (currentView === 'notes') {
+    const filtered = notes.filter(n => n.tags.includes(tag));
+    renderNotes(filtered);
+  }
+}
+
+// Show view
+function showView(view) {
+  currentView = view;
+
+  // Update nav
+  document.querySelectorAll('.nav-item').forEach((item, index) => {
+    item.classList.toggle('active', index === ['tasks', 'notes', 'calendar', 'archive'].indexOf(view));
+  });
+
+  // Show/hide views
+  document.getElementById('tasksView').style.display = view === 'tasks' ? 'block' : 'none';
+  document.getElementById('notesView').style.display = view === 'notes' ? 'block' : 'none';
+  document.getElementById('calendarView').style.display = view === 'calendar' ? 'block' : 'none';
+  document.getElementById('archiveView').style.display = view === 'archive' ? 'block' : 'none';
+
+  // Render appropriate content
+  if (view === 'tasks') renderTasks();
+  if (view === 'notes') renderNotes();
+  if (view === 'calendar') renderCalendar();
+  if (view === 'archive') renderArchive();
+}
+
+// Modal
+function showModal(type) {
+  document.getElementById('modal').classList.add('active');
+  document.getElementById('modalTitle').textContent = type === 'task' ? 'New Task' : 'New Note';
+}
+
+function hideModal() {
+  document.getElementById('modal').classList.remove('active');
+}
+
+// Export data
+function exportData() {
+  const data = {
+    tasks,
+    notes,
+    exported: new Date().toISOString()
+  };
+  const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `lcs-workhub-backup-${new Date().toISOString().split('T')[0]}.json`;
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
+// Initialize
+updateStats();
+renderTasks();
+renderNotes();
+
+// Close modal on overlay click
+document.getElementById('modal').addEventListener('click', (e) => {
+  if (e.target === document.getElementById('modal')) hideModal();
+});
+</script>
+
+</body>
+</html>
