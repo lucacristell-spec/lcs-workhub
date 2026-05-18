@@ -10,26 +10,26 @@
   * { margin: 0; padding: 0; box-sizing: border-box; }
 
   :root {
-    --bg: #f5f5f7;
+    --bg: #f2f2f7;
     --bg-card: #ffffff;
-    --bg-elevated: #f5f5f7;
-    --bg-hover: #e8e8ed;
+    --bg-elevated: #ffffff;
+    --bg-hover: #e5e5ea;
     --accent: #007aff;
-    --accent-dim: rgba(0, 122, 255, 0.1);
-    --accent-glow: rgba(0, 122, 255, 0.2);
+    --accent-dim: rgba(0, 122, 255, 0.12);
+    --accent-glow: rgba(0, 122, 255, 0.25);
     --purple: #af52de;
-    --purple-dim: rgba(175, 82, 222, 0.1);
+    --purple-dim: rgba(175, 82, 222, 0.12);
     --green: #34c759;
-    --green-dim: rgba(52, 199, 89, 0.1);
+    --green-dim: rgba(52, 199, 89, 0.12);
     --orange: #ff9500;
-    --orange-dim: rgba(255, 149, 0, 0.1);
+    --orange-dim: rgba(255, 149, 0, 0.12);
     --red: #ff3b30;
-    --red-dim: rgba(255, 59, 48, 0.1);
-    --text: #1c1c1e;
-    --text-dim: #8e8e93;
-    --text-dark: #c7c7cc;
-    --border: rgba(0,0,0,0.06);
-    --border-hover: rgba(0, 122, 255, 0.3);
+    --red-dim: rgba(255, 59, 48, 0.12);
+    --text: #000000;
+    --text-dim: #6b7280;
+    --text-dark: #9ca3af;
+    --border: rgba(0,0,0,0.08);
+    --border-hover: rgba(0, 122, 255, 0.4);
     --font-body: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', sans-serif;
     --font-mono: 'SF Mono', SFMono-Regular, 'JetBrains Mono', monospace;
   }
@@ -41,6 +41,7 @@
     line-height: 1.6;
     min-height: 100vh;
     -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
   }
 
   /* Header */
@@ -702,7 +703,150 @@
     color: var(--text-dark);
   }
 
-  /* Responsive */
+  .calendar-container {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 1.5rem;
+  }
+
+  .calendar-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+  }
+
+  .calendar-title {
+    font-size: 1.3rem;
+    font-weight: 700;
+    color: var(--text);
+  }
+
+  .calendar-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 0.5rem;
+  }
+
+  .calendar-day-header {
+    text-align: center;
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--text-dim);
+    padding: 0.5rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  .calendar-day {
+    background: var(--bg-elevated);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 0.75rem;
+    min-height: 100px;
+    cursor: pointer;
+    transition: all 0.3s;
+  }
+
+  .calendar-day:hover {
+    border-color: var(--accent);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  }
+
+  .calendar-day.empty {
+    background: transparent;
+    border: none;
+    cursor: default;
+  }
+
+  .calendar-day.empty:hover {
+    transform: none;
+    box-shadow: none;
+  }
+
+  .calendar-day.today {
+    border-color: var(--accent);
+    background: var(--accent-dim);
+  }
+
+  .day-number {
+    font-family: var(--font-mono);
+    font-weight: 700;
+    font-size: 0.9rem;
+    margin-bottom: 0.5rem;
+    color: var(--text);
+  }
+
+  .calendar-day.today .day-number {
+    color: var(--accent);
+  }
+
+  .calendar-task {
+    font-size: 0.7rem;
+    padding: 0.2rem 0.4rem;
+    border-radius: 4px;
+    margin-bottom: 0.25rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    font-weight: 500;
+  }
+
+  .calendar-task.high {
+    background: var(--red-dim);
+    color: var(--red);
+  }
+
+  .calendar-task.medium {
+    background: var(--orange-dim);
+    color: var(--orange);
+  }
+
+  .calendar-task.low {
+    background: var(--green-dim);
+    color: var(--green);
+  }
+
+  .day-detail {
+    margin-top: 1.5rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--border);
+  }
+
+  .day-detail-header {
+    font-size: 1rem;
+    font-weight: 700;
+    margin-bottom: 1rem;
+    color: var(--text);
+  }
+
+  .day-task-item {
+    background: var(--bg-elevated);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 1rem;
+    margin-bottom: 0.75rem;
+  }
+
+  .day-task-title {
+    font-weight: 600;
+    font-size: 0.9rem;
+    margin-bottom: 0.35rem;
+  }
+
+  .day-task-desc {
+    font-size: 0.85rem;
+    color: var(--text-dim);
+    margin-bottom: 0.5rem;
+  }
+
+  .day-task-meta {
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+  }
   @media (max-width: 768px) {
     .container {
       grid-template-columns: 1fr;
@@ -728,6 +872,20 @@
     .header {
       flex-direction: column;
       gap: 1rem;
+    }
+
+    .calendar-grid {
+      gap: 0.25rem;
+    }
+
+    .calendar-day {
+      min-height: 60px;
+      padding: 0.35rem;
+    }
+
+    .calendar-task {
+      font-size: 0.6rem;
+      padding: 0.15rem 0.25rem;
     }
   }
 </style>
@@ -763,7 +921,7 @@
       </div>
       <div class="nav-item" onclick="showView('calendar')">
         <span class="nav-icon">📅</span>
-        <span>Schedule</span>
+        <span>Calendar</span>
       </div>
       <div class="nav-item" onclick="showView('archive')">
         <span class="nav-icon">📦</span>
@@ -825,7 +983,7 @@
 
       <div class="task-input-card">
         <div class="input-row">
-          <input type="text" class="input-field" placeholder="What needs to be done?" id="newTaskTitle">
+          <input type="text" class="input-field" placeholder="Client Name" id="newTaskTitle">
           <input type="date" class="select-field" id="newTaskDate">
           <select class="select-field" id="newTaskPriority">
             <option value="low">Low</option>
@@ -870,16 +1028,16 @@
       </div>
     </div>
 
-    <!-- Calendar View -->
+  <!-- Calendar View -->
     <div id="calendarView" style="display: none;">
       <div class="section-header">
         <div>
-          <div class="section-title">Schedule</div>
-          <div class="section-subtitle">Upcoming deadlines and meetings</div>
+          <div class="section-title">Calendar</div>
+          <div class="section-subtitle">Full monthly view of deadlines and meetings</div>
         </div>
       </div>
-      <div class="task-list" id="calendarList">
-        <!-- Scheduled tasks will appear here -->
+      <div class="calendar-container" id="calendarContainer">
+        <!-- Calendar will be rendered here -->
       </div>
     </div>
 
@@ -1063,35 +1221,106 @@ function renderNotes(filteredNotes = null) {
 
 // Render calendar
 function renderCalendar() {
-  const list = document.getElementById('calendarList');
-  const scheduled = tasks.filter(t => t.date && !t.completed).sort((a, b) => new Date(a.date) - new Date(b.date));
-
-  if (scheduled.length === 0) {
-    list.innerHTML = `
-      <div class="empty-state">
-        <div class="empty-icon">📅</div>
-        <div class="empty-text">No scheduled tasks</div>
-        <div class="empty-sub">Add dates to tasks to see them here</div>
+  const container = document.getElementById('calendarContainer');
+  const now = new Date();
+  const year = now.getFullYear();
+  const month = now.getMonth();
+  
+  const monthNames = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+  const daysInMonth = new Date(year, month + 1, 0).getDate();
+  const firstDay = new Date(year, month, 1).getDay();
+  
+  // Get tasks for this month
+  const monthTasks = tasks.filter(t => {
+    if (!t.date) return false;
+    const d = new Date(t.date);
+    return d.getFullYear() === year && d.getMonth() === month && !t.completed;
+  });
+  
+  let html = `
+    <div class="calendar-header">
+      <button class="btn" onclick="changeMonth(-1)">←</button>
+      <div class="calendar-title">${monthNames[month]} ${year}</div>
+      <button class="btn" onclick="changeMonth(1)">→</button>
+    </div>
+    <div class="calendar-grid">
+      <div class="calendar-day-header">Sun</div>
+      <div class="calendar-day-header">Mon</div>
+      <div class="calendar-day-header">Tue</div>
+      <div class="calendar-day-header">Wed</div>
+      <div class="calendar-day-header">Thu</div>
+      <div class="calendar-day-header">Fri</div>
+      <div class="calendar-day-header">Sat</div>
+  `;
+  
+  // Empty cells for days before start of month
+  for (let i = 0; i < firstDay; i++) {
+    html += '<div class="calendar-day empty"></div>';
+  }
+  
+  // Days
+  for (let day = 1; day <= daysInMonth; day++) {
+    const dayTasks = monthTasks.filter(t => {
+      const d = new Date(t.date);
+      return d.getDate() === day;
+    });
+    
+    const isToday = day === now.getDate();
+    const dayClass = isToday ? 'calendar-day today' : 'calendar-day';
+    
+    html += `
+      <div class="${dayClass}" onclick="showDayTasks(${day})">
+        <div class="day-number">${day}</div>
+        ${dayTasks.map(t => `
+          <div class="calendar-task ${t.priority}">${t.title}</div>
+        `).join('')}
       </div>
     `;
+  }
+  
+  html += '</div>';
+  
+  // Day detail panel
+  html += '<div id="dayDetail" class="day-detail"></div>';
+  
+  container.innerHTML = html;
+}
+
+function changeMonth(delta) {
+  // Simple implementation - would need state tracking for full functionality
+  renderCalendar();
+}
+
+function showDayTasks(day) {
+  const now = new Date();
+  const year = now.getFullYear();
+  const month = now.getMonth();
+  
+  const dayTasks = tasks.filter(t => {
+    if (!t.date || t.completed) return false;
+    const d = new Date(t.date);
+    return d.getFullYear() === year && d.getMonth() === month && d.getDate() === day;
+  });
+  
+  const detail = document.getElementById('dayDetail');
+  if (dayTasks.length === 0) {
+    detail.innerHTML = '';
     return;
   }
-
-  list.innerHTML = scheduled.map(task => `
-    <div class="task-card">
-      <div class="task-header">
-        <div class="task-content">
-          <div class="task-title">${task.title}</div>
-          <div class="task-desc">${task.desc}</div>
-          <div class="task-meta">
-            ${task.tags.map(tag => `<span class="task-tag ${tag}">${tag}</span>`).join('')}
-            <span class="task-date">📅 ${task.date}</span>
-            <div class="task-priority ${task.priority}"></div>
-          </div>
+  
+  detail.innerHTML = `
+    <div class="day-detail-header">Tasks for ${month + 1}/${day}/${year}</div>
+    ${dayTasks.map(t => `
+      <div class="day-task-item">
+        <div class="day-task-title">${t.title}</div>
+        <div class="day-task-desc">${t.desc}</div>
+        <div class="day-task-meta">
+          ${t.tags.map(tag => `<span class="task-tag ${tag}">${tag}</span>`).join('')}
+          <span class="task-priority ${t.priority}"></span>
         </div>
       </div>
-    </div>
-  `).join('');
+    `).join('')}
+  `;
 }
 
 // Render archive
